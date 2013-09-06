@@ -66,6 +66,10 @@ if(count($api) >= 2) {
 				$stmt->execute(array(':newvalue' => $_POST['site_title']));
 			}
 		}
+
+		// We saved settings, let's redirect home
+		header("Location: /");
+		exit;
 	}
 
 
