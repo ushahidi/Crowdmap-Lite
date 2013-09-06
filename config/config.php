@@ -8,7 +8,7 @@
 
 		// Crowdmap API
 		public $api = array(
-			'endpoint'   => 'https://api.crowdmap.new/v1',
+			'endpoint'   => 'https://api.crowdmap.com/v1',
 			'privateKey' => 'HMgcYgacPerPZmgo', // Throw Away Keys for testing
 			'publicKey'  => 'fezpasywFZPRKatp'
 			); // No trailing slash, include v1
