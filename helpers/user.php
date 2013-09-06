@@ -48,11 +48,11 @@ class UserAnonymous {
 	}
 
 	function Avatar() {
-		return config::$static_url . '/assets/img/content/anonymous.png';
+		return $config->static_url . '/assets/img/content/anonymous.png';
 	}
 
 	function Baselayer() {
-		return config::$default_baselayer;
+		return $config->default_baselayer;
 	}
 
 	function InstagramAutoPost() {
@@ -211,14 +211,14 @@ class User {
 		if(isset($this->profileData->avatar) && !is_null($this->profileData->avatar))
 			return str_replace(array('http://', 'https://'), '//', $this->profileData->avatar);
 		else
-			return config::$static_url . '/assets/img/content/anonymous.png';
+			return $config->static_url . '/assets/img/content/anonymous.png';
 	}
 
 	function Baselayer() {
 		if(isset($this->profileData->baselayer) AND ! empty($this->profileData->baselayer))
 			return $this->profileData->baselayer;
 		else
-			return config::$default_baselayer;
+			return $config->default_baselayer;
 	}
 
 	function InstagramAutoPost() {

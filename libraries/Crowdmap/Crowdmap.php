@@ -54,7 +54,7 @@ class Crowdmap {
 	//   ie: $crowdmap->maps(ARGS) will call http://api.crdmp3.com/v1/maps/...
 	public function __call($resource, $args=FALSE)
 	{
-		global $Me;
+		global $Me, $config;
 
 		// Collapse args since it comes through as a nested array
 		$method = 'GET';
@@ -77,7 +77,7 @@ class Crowdmap {
 
 		if(!isset($args['parameters']['session'])) {
 			$date = time();
-			$args['parameters']['apikey'] = 'A' . config::$api['publicKey'] . hash_hmac('sha1', "{$method}\n{$date}\n/{$resource}{$path}\n", config::$api['privateKey']);
+			$args['parameters']['apikey'] = 'A' . $config->api['publicKey'] . hash_hmac('sha1', "{$method}\n{$date}\n/{$resource}{$path}\n", $config->api['privateKey']);
 		}
 
 		if (isset($args['parameters']))
@@ -88,7 +88,7 @@ class Crowdmap {
 			$parameters = '?' . http_build_query($args['parameters']);
 		}
 
-		$url  = rtrim(config::$api['endpoint'], '/') . '/' . $resource . $path . $parameters;
+		$url  = rtrim($config->api['endpoint'], '/') . '/' . $resource . $path . $parameters;
 
 		$request = Crowdmap_Web::request($method,$url,$data);
 		$response = json_decode($request['response']);
@@ -103,7 +103,7 @@ class Crowdmap {
 		} elseif ($code == 401) {
 			// The user's session token has expired. Redirect them to /login.
 			setCookie('session', '', time() - 3600, '/', ".{$_SERVER['HTTP_HOST']}");
-			header('Location: ' . config::$base_url . '/login?r=' . mt_rand() . '&reason=sessionexpired');
+			header('Location: ' . $config->base_url . '/login?r=' . mt_rand() . '&reason=sessionexpired');
 			exit;
 		} elseif ($code != 200) {
 			ini_set('memory_limit', '256M');
@@ -123,6 +123,6 @@ class Crowdmap {
 
 	public static function apikey($method,$resource){
 		$date = time();
-		$args['parameters']['apikey'] = 'A' . config::$api['publicKey'] . hash_hmac('sha1', "{$method}\n{$date}\n/{$resource}\n", config::$api['privateKey']);
+		$args['parameters']['apikey'] = 'A' . $config->api['publicKey'] . hash_hmac('sha1', "{$method}\n{$date}\n/{$resource}\n", $config->api['privateKey']);
 	}
 }

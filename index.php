@@ -1,7 +1,14 @@
 <?php
+
+	require_once 'config/config.php';
+
+	if(isset($_SERVER["DB1_HOST"]) OR 1==1){
+		// Likely on Pagoda Box. Possible it's not but we're rolling with this for now.
+		require_once 'setup.php';
+	}
+
 	// Composer Auto Loading
 	require_once 'vendor/autoload.php';
-	require_once 'config/config.php';
 
 	require_once 'libraries/Crowdmap/Crowdmap.php';
 
@@ -10,26 +17,26 @@
 	require_once 'helpers/template.php';
 	require_once 'helpers/user.php';
 
-	$app->get('/?', function () use ($t, $Me, $app) {
+	$app->get('/?', function () use ($t, $Me, $app, $config) {
 		require_once 'views/header.php';
 		require_once 'views/home.php';
 		require_once 'views/footer.php';
 	});
 
-	$app->get('/create/map/?', function () use ($t, $Me, $app) {
+	$app->get('/create/map/?', function () use ($t, $Me, $app, $config) {
 		require_once 'views/header.php';
 		require_once 'views/maps/create.php';
 		require_once 'views/footer.php';
 	});
 
-	$app->post('/create/map/?', function () use ($t, $Me, $app) {
+	$app->post('/create/map/?', function () use ($t, $Me, $app, $config) {
 		$name      = $app->request()->params('name');
 		$subdomain = $app->request()->params('subdomain');
 		$data = array('apikey'    => $t->crowdmap->apikey('POST','/maps/'),
 					  'session'   => $Me->SessionID(),
 					  'name'      => $name,
 					  'subdomain' => $subdomain);
-		$response = web::post(config::$api['endpoint'].'/maps/',$data,$_SERVER['HTTP_USER_AGENT']);
+		$response = web::post($config->api['endpoint'].'/maps/',$data,$_SERVER['HTTP_USER_AGENT']);
 
 		$response = json_decode($response);
 
@@ -45,10 +52,10 @@
 		require_once 'views/footer.php';
 	});
 
-	$app->get('/map/:subdomain/?', function ($subdomain) use ($t, $Me, $app) {
+	$app->get('/map/:subdomain/?', function ($subdomain) use ($t, $Me, $app, $config) {
 		$t->map = $t->get_map($subdomain);
 
-		if (!$t->map) $app->redirect('/lite/');
+		if (!$t->map) $app->redirect('/');
 		$t->map_association = $t->get_map_association($t->map->map_id,$Me->UserID());
 
 		$t->posts = $t->get_posts_from_map($subdomain,array('fields'=>'posts.message,posts.date_posted,tags.tag,posts.owner_map_id,users.user_id,users.avatar,users.username,maps.name,maps.avatar,maps.subdomain,maps.approved'));

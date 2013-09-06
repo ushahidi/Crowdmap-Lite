@@ -1,8 +1,12 @@
 web1:
   php_extensions:
+    - pdo_mysql
     - curl
     - mbstring
     - mcrypt
     - zip
   after_build:
     - "if [ ! -f composer.phar ]; then curl -s http://getcomposer.org/installer | php; fi; php composer.phar install"
+db1:
+  name: settings
+  type: mysql

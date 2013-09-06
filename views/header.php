@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-	<title>Crowdmap Lite</title>
+	<title><?=$config->site_title?></title>
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 	<link href="/assets/css/bootstrap.6.min.css" rel="stylesheet" media="screen">
@@ -12,9 +12,9 @@
 
 	<script>
 		var root = {};
-		root.publicKey  = "<?=config::$api['publicKey']?>";
-		root.privateKey = "<?=config::$api['privateKey']?>";
-		root.endpoint   = "<?=config::$api['endpoint']?>";
+		root.publicKey  = "<?=$config->api['publicKey']?>";
+		root.privateKey = "<?=$config->api['privateKey']?>";
+		root.endpoint   = "<?=$config->api['endpoint']?>";
 		<?php if(isset($t->map->subdomain)) { ?>
 		root.subdomain  = "<?=$t->map->subdomain?>"
 		<?php } ?>
@@ -44,7 +44,7 @@
 				<span class="icon-bar"></span>
 				<span class="icon-bar"></span>
 			</button>
-			<a class="navbar-brand" href="/"><span class="glyphicon glyphicon-map-marker"></span> Crowdmap Lite</a>
+			<a class="navbar-brand" href="/"><span class="glyphicon glyphicon-map-marker"></span> <?=$config->site_title?></a>
 		</div>
 
 		<?php if(!AUTHENTICATED): ?>

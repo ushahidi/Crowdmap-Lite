@@ -91,32 +91,6 @@ class t {
 
 	}
 
-	// Returns available baselayers to a logged in user for a given page
-	public function available_baselayers()
-	{
-		global $Me;
-
-		$plus = false;
-		if($Me->PlusSubscriber())
-			$plus = true;
-
-		$display_baselayer = self::display_baselayer();
-		$display_provider = config::$baselayers[$display_baselayer]['provider'];
-
-		$baselayers = array();
-
-		foreach(config::$baselayers AS $code => $baselayer)
-		{
-			// If it's the display baselayer (on a map page), not paid or we are a paying customer (in which case, show everything)
-			if ($code == $display_baselayer OR $baselayer['plus'] == FALSE OR $plus == TRUE)
-			{
-				$baselayers[$code] = $baselayer;
-			}
-		}
-
-		return $baselayers;
-	}
-
 	// map is a map object
 	public function save_map($map)
 	{
@@ -154,29 +128,6 @@ class t {
 		$record = geoip_record_by_addr($gi,$ip);
 		geoip_close($gi);
 		return $record;
-	}
-
-	// **************************** Recurly Payment Form ***************************
-
-	public function setup_recurly()
-	{
-		Recurly_Client::$apiKey = config::$recurly['apiKey'];
-		Recurly_js::$privateKey = config::$recurly['privateKey'];
-	}
-
-	public function recurly_signature($Me,$plan_code)
-	{
-		if ( ! AUTHENTICATED )
-			return false;
-
-		$recurlyid = $Me->RecurlyID();
-		$email = $Me->Email()->email;
-
-		self::setup_recurly();
-		return Recurly_js::sign(
-							array('subscription' => array('plan_code' => $plan_code),
-								  'account'      => array('account_code' => $recurlyid, 'email' => $email))
-		);
 	}
 
 
@@ -332,7 +283,7 @@ class t {
 
 		// Check for defaults here
 		if ($setting_name == 'baselayer')
-			return config::$default_baselayer;
+			return $config->default_baselayer;
 
 		return NULL;
 	}
@@ -596,9 +547,9 @@ class t {
 				if($rel == 'username' || $rel == 'tag') {
 
 					if($rel == 'username')
-						$anchor->setAttribute('href', config::$base_url . '/user/' . urlencode(strtolower($link)));
+						$anchor->setAttribute('href', $config->base_url . '/user/' . urlencode(strtolower($link)));
 					elseif($rel == 'tag')
-						$anchor->setAttribute('href', config::$base_url . '/search/?q=%23' . urlencode($link));
+						$anchor->setAttribute('href', $config->base_url . '/search/?q=%23' . urlencode($link));
 
 					$anchor->setAttribute('class', $rel);
 					$anchor->removeAttribute('rel');
@@ -626,7 +577,7 @@ class t {
 			if (preg_match_all($regex, $text, $urls)) {
 				$matches = array_unique($urls[0]);
 
-				$baseDomain = parse_url(config::$base_url);
+				$baseDomain = parse_url($config->base_url);
 				$baseDomain = $baseDomain['host'];
 
 				foreach($matches as $match) {
@@ -661,10 +612,10 @@ class t {
 			}
 
 			// @username
-			$text = preg_replace('/(^|\s)@(\w+)/', '\1@<a href="' . config::$base_url . '/user/\2">\2</a>', $text);
+			$text = preg_replace('/(^|\s)@(\w+)/', '\1@<a href="' . $config->base_url . '/user/\2">\2</a>', $text);
 
 			// #hashtag
-			$text = preg_replace('/(^|\s)#(\w+)/', '\1#<a href="' . config::$base_url . '/search/?q=%23\2">\2</a>', $text);
+			$text = preg_replace('/(^|\s)#(\w+)/', '\1#<a href="' . $config->base_url . '/search/?q=%23\2">\2</a>', $text);
 		}
 
 		return $text;
