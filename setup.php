@@ -41,6 +41,10 @@ foreach($db->query("SELECT * FROM settings") as $row) {
 		$api[$row['key']] = $row['value'];
 	}
 
+	if($row['key'] == 'site_title') {
+		$config->site_title = $row['value'];
+	}
+
 }
 
 if(count($api) >= 2) {
